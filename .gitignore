@@ -1,1 +1,5 @@
 *.ini
+*.mat
+*.slxc
+*.asv
+*.xml

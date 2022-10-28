@@ -68,6 +68,7 @@ fprintf("Calculating Allan variance...\n")
 toc
 
 adev = sqrt(avar);
+
 % Calculate Allan variance confidence limit
 I = 1./sqrt(2.*(N./m-1));
 
@@ -75,7 +76,18 @@ I = 1./sqrt(2.*(N./m-1));
 % This part is not working correctly yet.
 % Our Allan variance has a different format due to 
 % the low-pass filter we apply to the signal
-[arw,bias,rrw,iN,iB,iK] = fun_allan_fit(taus, adev);
+% [arw,bias,rrw,iN,iB,iK] = fun_allan_fit(taus, adev);
+[adevFit, q, arw, bias, rrw, rr] = fun_allan_fit_msq(taus,adev);
+
+% plot Allan deviation fit
+figure
+hold on;
+plot(taus, adevFit, ...
+    'color', [0.9059 0.2980 0.2353 .8], ...
+    'LineWidth',2);
+plot(taus, adev, ...
+    'Color',[.2 .2 .2]); 
+    set(gca,'YScale','log','XScale','log')
 
 %% Converting output units
 switch sensor
@@ -93,9 +105,9 @@ switch sensor
 end
 
 %% Print out fitted values
-fprintf('\nARW = %.2s\n', arw_out)
-fprintf('Bias = %.2s\n', bias_out)
-fprintf('RRW = %.2s\n', rrw_out)
+fprintf('\nARW = %.2s\n', abs(arw_out))
+fprintf('Bias = %.2s\n', abs(bias_out))
+fprintf('RRW = %.2s\n', abs(rrw_out))
 
 %% Figures
 gray = [.3 .3 .3];
@@ -115,38 +127,16 @@ subplot(3,1,2)
         set(gca,'YScale','log','XScale','log')
         xlabel('tau [s]')
         ylabel('Allan deviation')
-    % Ploting Allan variance recovered points
-    % ARW
-    plot(taus(iN),adev(iN), ...
-        '.','MarkerSize',10,'Color',gray)
-    plot(taus,(arw./sqrt(taus)),...
-        '--','Color',gray)
-    text(taus(iN),adev(iN)*1.5, '$ARW{\times}60$',...
-        'Interpreter','latex')
-    % BIAS
-    plot(taus(iB),adev(iB), ...
-        '.','MarkerSize',10,'Color',gray)
-    plot(taus,(bias*0.6643*ones(size(taus))),...
-        '--','Color',gray)
-    text(taus(iB)*0.6,adev(iB)*0.5, '$BIAS{\times}0.664$',...
-        'Interpreter','latex')
-    % RRW
-    plot(3, rrw, ...
-        '.','MarkerSize',10,'Color',gray)
-    plot(taus, (rrw.*sqrt(taus/3)), ...
-        '--','Color',gray)
-    text(3*0.2, rrw*1.5, '$RRW$',...
-        'Interpreter','latex')
 % Plot Allan variance with confidence limits
 subplot(3,1,3)
-patch([taus; flip(taus)], ...
-    [adev-adev.*I;  flip(adev+adev.*I)], ...
-    gray,'LineStyle','none')
-    set(gca,'YScale','log','XScale','log')
-    alpha(0.2)
-hold on
-plot(taus, adev,...
-    'color',gray,'LineWidth',1.2)
-    set(gca,'YScale','log','XScale','log')
-    xlabel('tau [s]')
-    ylabel('Allan deviation')
+    patch([taus; flip(taus)], ...
+        [adev-adev.*I;  flip(adev+adev.*I)], ...
+        gray,'LineStyle','none')
+        set(gca,'YScale','log','XScale','log')
+        alpha(0.2)
+    hold on
+    plot(taus, adev,...
+        'color',gray,'LineWidth',1.2)
+        set(gca,'YScale','log','XScale','log')
+        xlabel('tau [s]')
+        ylabel('Allan deviation')

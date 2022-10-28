@@ -7,6 +7,7 @@ close all
 sensor  = 'gyroscope';
 file    = 'gyro_test_data.txt';
 fs      = 100;   % [Hz]
+fprintf("Chosen file: %s\n",file)
 
 % Choose start and end points
 % make t1 = t2 = 0 if it is to use all the data set
@@ -21,6 +22,7 @@ addpath(['d:\users\',user,'\Downloads']);
 % Importing data
 tic
 tmp = readmatrix(file);
+fprintf("File successfully imported...")
 toc
 
 %% Data processing
@@ -46,7 +48,7 @@ t = linspace(0, (N-1)/fs, N);
 
 %% Allan variance calculation
 
-% Create array for Allan variance
+% Create array for Allan variance correlation periods
 m = fun_tau_array(N, 100, "optimized");
 
 fprintf('Total time span of signal: %.2f h\n', ...
@@ -65,7 +67,10 @@ adev = sqrt(avar);
 % Calculate Allan variance confidence limit
 I = 1./sqrt(2.*(N./m-1));
 
-% Calculate noises and respective indexes
+%% Calculate noises and respective indexes
+% This part is not working correctly yet.
+% Our Allan variance has a different format due to 
+% the low-pass filter we apply to the signal
 [arw,bias,rrw,iN,iB,iK] = fun_allan_fit(taus, adev);
 
 % Converting output units
@@ -83,22 +88,22 @@ switch sensor
         rrw_out = rrw*(60^3);       % m/s^3/rt-Hz?
 end
 
-%%
+%% Print out fitted values
 fprintf('\nARW = %.2s\n', arw_out)
 fprintf('Bias = %.2s\n', bias_out)
 fprintf('RRW = %.2s\n', rrw_out)
 
-%%
+%% Figures
 gray = [.3 .3 .3];
 figure('Units','centimeters','Position',[1 1 10 20])
-    % Plot Signal
+% Plot Signal
 subplot(3,1,1)
     hold on
     plot(t/60/60, data, 'color',[.3 .3 .3])
         xlabel('Time [h]')
         ylabel('Measurement')
     xline((2*m(end))/fs/60/60)
-    % Plot Allan variance
+% Plot Allan variance
 subplot(3,1,2)
     hold on
     plot(taus, adev,...
@@ -128,7 +133,7 @@ subplot(3,1,2)
         '--','Color',gray)
     text(3*0.2, rrw*1.5, '$RRW$',...
         'Interpreter','latex')
-    
+% Plot Allan variance with confidence limits
 subplot(3,1,3)
 patch([taus; flip(taus)], ...
     [adev-adev.*I;  flip(adev+adev.*I)], ...

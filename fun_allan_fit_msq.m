@@ -1,4 +1,4 @@
-% function [q, arw, bias, rrw, rr] = fun_allan_fit_msqr(taus, adev)
+function [adevFit, Q, arw, bias, rrw, rr] = fun_allan_fit_msqr(taus, adev)
 % Calculate the sensor noise parameters/coefficients from the 
 % Allan Variance data using Weighted Linear Regression
 
@@ -47,14 +47,6 @@
     rr   = (2*avarFit(5))^(0.5);
 
     adevFit = sqrt(avarFit'*TAUS);
-    
-    %%
-    figure
-    hold on;
-    plot(taus, adevFit, ...
-        'color', [0.9059 0.2980 0.2353 .8], ...
-        'LineWidth',2);
-    plot(taus, adev, ...
-        'Color',[.2 .2 .2]); 
-        set(gca,'YScale','log','XScale','log')
-% end
+    adevFit = adevFit';
+
+end

@@ -37,7 +37,7 @@ N = length(t);
 fprintf('Running 1st Model...\n')
 omega1 = jerath2017_noise(w_ie_down,bias_in,arw_in,rrw_in, ...
         fs,time);
-
+omega1 = lowpass(omega1,5,100);
 figure
 plot(t/60/60, omega1*3600,'color',[.3 .3 .3])
 

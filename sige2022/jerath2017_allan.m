@@ -38,7 +38,7 @@ function [avar, taus, arw, bias, rrw] = jerath2017_allan(data, fs)
         end
         
          % Calculate Root Allan Variance
-        RootAllanVar(count) = sqrt(0.5*mean(Diff.*Diff ));
+        RootAllanVar(count) = sqrt(0.5*mean(Diff.*Diff));
     end
     
     % Calculate the sensor noise parameters/coefficients from the 

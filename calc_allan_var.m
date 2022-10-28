@@ -43,13 +43,14 @@ if size(data,2) == 2
     temp = tmp(:,2);
 end
 
+%%
 N = length(data);
 t = linspace(0, (N-1)/fs, N);
 
 %% Allan variance calculation
 
 % Create array for Allan variance correlation periods
-m = fun_tau_array(N, 100, "optimized");
+m = fun_tau_array(N, 1000, "optimized");
 
 fprintf('Total time span of signal: %.2f h\n', ...
     N/fs/60/60);
@@ -61,9 +62,12 @@ fprintf('Time span of signal used to calculate Allan variance: %.2f h\n', ...
 % It requires one of the following toolbox:
 %   Sensor Fusion and Tracking Toolbox
 %   Navigation Toolbox
+tic
+fprintf("Calculating Allan variance...\n")
 [avar, taus] = allanvar(data, m, fs);
-adev = sqrt(avar);
+toc
 
+adev = sqrt(avar);
 % Calculate Allan variance confidence limit
 I = 1./sqrt(2.*(N./m-1));
 
@@ -73,7 +77,7 @@ I = 1./sqrt(2.*(N./m-1));
 % the low-pass filter we apply to the signal
 [arw,bias,rrw,iN,iB,iK] = fun_allan_fit(taus, adev);
 
-% Converting output units
+%% Converting output units
 switch sensor
     case 'gyroscope'
         fprintf('inside gyro\n')

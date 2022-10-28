@@ -1,19 +1,23 @@
 function [arw, bias, rrw, iN, iB, iK] = fun_allan_fit(taus, adev)
 % Fittings ARW, RRW, and Bias drift from Allan deviation plot
-% function from MATLAB website
+%
+% arw,  bias,   rrw       = Fitted noises
+% iN,   iB,     iK        = Noises index
+%
+% This function must receive an Allan deviation in the standard format,
+% i.e., just one inflexion point, check mark shape.
+%
+% function from MATLAB's website
+% https://www.mathworks.com/help/fusion/ug/inertial-sensor-noise-analysis-using-allan-variance.html
 
     x = log10(taus);
     y = log10(adev);
     dy = diff(y)./diff(x);
 
-    % Angle random walk
+    %% Angle random walk
     slope = -1/2; 
     % tau can be 1s or 1h
-    % check reference for the posterior calculations
     tau = 1; 
-
-% EXPLAIN THIS PART!
-    % what if there are oscilations?
     % finding the minimum local error slope
     [~, iN] = min(abs(dy-slope));
     % Fitting a line with slope -1/2 
@@ -23,7 +27,7 @@ function [arw, bias, rrw, iN, iB, iK] = fun_allan_fit(taus, adev)
     logN = slope*log(tau) + b;
     arw = 10^logN; % value at tau=1
 
-    % Bias drift
+    %% Bias drift
     slope = 0;
     [~, iB] = min(abs(dy-slope));
     b = y(iB) - slope*x(iB);
@@ -33,7 +37,7 @@ function [arw, bias, rrw, iN, iB, iK] = fun_allan_fit(taus, adev)
     % If it does not work, try the minimum value instead.    
     % bias = min(adev)/scfB;
 
-    % Rate Random Walk
+    %% Rate Random Walk
     slope = 1/2; 
     tau = 3; % or at 3h
     [~, iK] = min(abs(dy-slope));

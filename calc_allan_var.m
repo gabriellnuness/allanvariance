@@ -77,7 +77,7 @@ I = 1./sqrt(2.*(N./m-1));
 % Our Allan variance has a different format due to 
 % the low-pass filter we apply to the signal
 % [arw,bias,rrw,iN,iB,iK] = fun_allan_fit(taus, adev);
-[adevFit, q, arw, bias, rrw, rr] = fun_allan_fit_msq(taus,adev);
+[adevFit, Q, arw, bias, rrw, rr] = fun_allan_fit_msq(taus,adev);
 
 % plot Allan deviation fit
 figure
@@ -105,9 +105,13 @@ switch sensor
 end
 
 %% Print out fitted values
-fprintf('\nARW = %.2s\n', abs(arw_out))
-fprintf('Bias = %.2s\n', abs(bias_out))
-fprintf('RRW = %.2s\n', abs(rrw_out))
+fprintf('\n')
+fprintf('Quantization noise = %.2s\n',Q)
+fprintf('Random walk noise = %.2s\n', arw)
+fprintf('Bias drift = %.2s\n', bias)
+fprintf('Rate walk noise = %.2s\n', rrw)
+fprintf('Rate ramp noise = %.2s\n', rr)
+
 
 %% Figures
 gray = [.3 .3 .3];

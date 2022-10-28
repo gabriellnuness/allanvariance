@@ -10,7 +10,7 @@ function m = fun_tau_array(N, pts, optm)
     elseif optm == "optimized" 
         m = logspace(0, log10(max_m), pts)';
     end
-    m = ceil(m);        
+    m = floor(m);        
     m = unique(m);
 
 end

@@ -21,7 +21,8 @@ addpath(['d:\users\',user,'\Downloads']);
 
 % Importing data
 tic
-tmp = readmatrix(file);
+% tmp = readmatrix(file);
+load example_data
 fprintf("File successfully imported...")
 toc
 
@@ -30,18 +31,17 @@ toc
 % Constants
 g =  9.80665; % m/s^2
 
-% Data selection
-if t1 == 0 && t2 ==0 
-    data = tmp(:,1);
-else
-    data = tmp(t1*fs*3600:t2*fs*3600, 1);
-end
-
-% Temperature data check
-% some data have temperature info as well
-if size(data,2) == 2
-    temp = tmp(:,2);
-end
+% Data selection from real dataset
+% if t1 == 0 && t2 ==0 
+%     data = tmp(:,1);
+% else
+%     data = tmp(t1*fs*3600:t2*fs*3600, 1);
+% end
+% % Temperature data check
+% % some data have temperature info as well
+% if size(data,2) == 2
+%     temp = tmp(:,2);
+% end
 
 %%
 N = length(data);

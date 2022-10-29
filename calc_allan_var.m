@@ -64,7 +64,8 @@ fprintf('Time span of signal used to calculate Allan variance: %.2f h\n', ...
 %   Navigation Toolbox
 tic
 fprintf("Calculating Allan variance...\n")
-[avar, taus] = allanvar(data, m, fs);
+% [avar, taus] = allanvar(data, m, fs);
+[avar, taus] = fun_avar(data, m, fs);
 toc
 
 adev = sqrt(avar);
@@ -119,7 +120,7 @@ figure('Units','centimeters','Position',[1 1 10 20])
 % Plot Signal
 subplot(3,1,1)
     hold on
-    plot(t/60/60, data, 'color',[.3 .3 .3])
+    plot(t/60/60, data, 'color', gray)
         xlabel('Time [h]')
         ylabel('Measurement')
     xline((2*m(end))/fs/60/60)

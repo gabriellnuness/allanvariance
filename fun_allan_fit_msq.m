@@ -1,4 +1,4 @@
-function [adevFit, Q, arw, bias, rrw, rr] = fun_allan_fit_msqr(taus, adev)
+function [adevFit, Q, arw, bias, rrw, rr] = fun_allan_fit_msq(taus, adev)
 % Calculate the sensor noise parameters/coefficients from the 
 % Allan Variance data using Weighted Linear Regression
 
@@ -11,16 +11,19 @@ function [adevFit, Q, arw, bias, rrw, rr] = fun_allan_fit_msqr(taus, adev)
     end
     avar = adev.^2;
     
-    % Least-squares weighted fitting
-    %
-    weight = 1./avar;  % Needed for performing weighted least squares
-    % [Q; ARW; BIAS; RRW; RR]
-    TAUS = [taus.^(-2);taus.^(-1);taus.^(0);taus.^(1);taus.^(2)];
-    AVARwt = diag(weight)*avar';
-    invTAUS = (inv(TAUS*diag(weight)*TAUS'))*TAUS;
-    % Fitted Allan Variance noise values 
-    avarFit = invTAUS*AVARwt;
-    %
+    %% Weighted Least-Squares Fitting
+    
+    % The weight is approximately to the order of magnitude
+    weight = 1./avar;
+    W = diag(weight);
+    
+    T = [taus.^(-2);
+         taus.^(-1);
+         taus.^(0);
+         taus.^(1);
+         taus.^(2)];
+
+    avarFit = (T*W*T')\T*W*avar';
 
     %% Fitted Allan deviation noise values
     % This values result in complex numbers
@@ -46,7 +49,7 @@ function [adevFit, Q, arw, bias, rrw, rr] = fun_allan_fit_msqr(taus, adev)
     % C = R^2 / 2
     rr   = (2*avarFit(5))^(0.5);
 
-    adevFit = sqrt(avarFit'*TAUS);
+    adevFit = sqrt(avarFit'*T);
     adevFit = adevFit';
 
 end

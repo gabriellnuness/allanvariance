@@ -11,7 +11,7 @@ fprintf("Chosen file: %s\n",file)
 
 % Choose start and end points
 % make t1 = t2 = 0 if it is to use all the data set
-t1 = 3.75;  % start measurement [h]
+t1 = 3.5;  % start measurement [h]
 t2 = 13.5;  % stop  measurement [h]
 
 % Setting relative path where the data is located
@@ -21,9 +21,8 @@ addpath(['d:\users\',user,'\Downloads']);
 
 % Importing data
 tic
-% tmp = readmatrix(file);
-load example_data
-fprintf("File successfully imported...")
+tmp = readmatrix(file);
+fprintf("File successfully imported...\n")
 toc
 
 %% Data processing
@@ -32,16 +31,18 @@ toc
 g =  9.80665; % m/s^2
 
 % Data selection from real dataset
-% if t1 == 0 && t2 ==0 
-%     data = tmp(:,1);
-% else
-%     data = tmp(t1*fs*3600:t2*fs*3600, 1);
-% end
-% % Temperature data check
-% % some data have temperature info as well
-% if size(data,2) == 2
-%     temp = tmp(:,2);
-% end
+if t1 == 0 && t2 ==0 
+    data = tmp(:,1);
+else
+    data = tmp(t1*fs*3600:t2*fs*3600, 1);
+end
+% Temperature data check
+% some data have temperature info as well
+if size(tmp,2) == 2  && t1 == 0 && t2 ==0 
+    temp = tmp(:,2);
+elseif size(tmp,2) == 2
+    temp = tmp(t1*fs*3600:t2*fs*3600,2);
+end
 
 %%
 N = length(data);
@@ -63,14 +64,33 @@ fprintf('Time span of signal used to calculate Allan variance: %.2f h\n', ...
 %   Sensor Fusion and Tracking Toolbox
 %   Navigation Toolbox
 tic
-fprintf("Calculating Allan variance...\n")
-% [avar, taus] = allanvar(data, m, fs);
-[avar, taus] = fun_avar(data, m, fs);
+fprintf("Calculating MATLAB Allan variance ...\n")
+[avar, taus] = allanvar(data, m, fs);
+toc
+
+% Homemade function
+tic
+fprintf("Calculating HOMEMADE Allan variance...\n")
+[avar1, taus1] = fun_avar(data, m, fs);
 toc
 
 adev = sqrt(avar);
+error = avar-avar1;
 
-% Calculate Allan variance confidence limit
+% Comparing Allan calculations
+figure
+plot(taus,avar)
+hold on
+plot(taus1,avar1,'--')
+    title('Comparison Allan variance calculations')
+    set(gca,'xscale','log','yscale','log')
+yyaxis right
+plot(taus, abs(error))
+    title('Error Allan variance')
+    ax = gca;
+    ax.YAxis(1).Color = 'k';
+
+%% Calculate Allan variance confidence limit
 I = 1./sqrt(2.*(N./m-1));
 
 %% Calculate noises and respective indexes
@@ -78,7 +98,10 @@ I = 1./sqrt(2.*(N./m-1));
 % Our Allan variance has a different format due to 
 % the low-pass filter we apply to the signal
 % [arw,bias,rrw,iN,iB,iK] = fun_allan_fit(taus, adev);
+tic
+fprintf("Fitting Allan variance\n")
 [adevFit, Q, arw, bias, rrw, rr] = fun_allan_fit_msq(taus,adev);
+toc
 
 % plot Allan deviation fit
 figure
@@ -124,13 +147,22 @@ subplot(3,1,1)
         xlabel('Time [h]')
         ylabel('Measurement')
     xline((2*m(end))/fs/60/60)
+    
+    % Plot temperature
+    if exist('temp','var') == 1
+        yyaxis right
+        plot(t/60/60, temp)
+            ylim([30 31])
+            ax = gca;
+            ax.YAxis(1).Color = 'k';
+    end    
 % Plot Allan variance
 subplot(3,1,2)
     hold on
     plot(taus, adev,...
         'color',[.3 .3 .3],'LineWidth',1.5)
         set(gca,'YScale','log','XScale','log')
-        xlabel('tau [s]')
+        xlabel('Correlation time [s]')
         ylabel('Allan deviation')
 % Plot Allan variance with confidence limits
 subplot(3,1,3)
@@ -143,5 +175,5 @@ subplot(3,1,3)
     plot(taus, adev,...
         'color',gray,'LineWidth',1.2)
         set(gca,'YScale','log','XScale','log')
-        xlabel('tau [s]')
+        xlabel('Correlation time [s]')
         ylabel('Allan deviation')

@@ -9,14 +9,12 @@ function [avar, taus] = fun_avar(data, m, fs)
     
     % Correlation time array
     taus = m/fs;
-
     % Half vectorized approach of equation from
     % IEEE 952-2020, p. 75
     N = length(data);
-    last_tau = length(m);
     data_sum = cumsum(data)/fs;
-    avar = zeros(last_tau, 1);
-    for k = 1:last_tau
+    avar = zeros(length(m), 1);
+    for k = 1:length(m)
         avar(k) = sum((data_sum(k+2*m(k):N) ...
                         - 2*data_sum(k+m(k):N-m(k)) ...
                         + data_sum(k:N-2*m(k))).^2 );

@@ -8,6 +8,7 @@ function m = fun_tau_array(N, pts, optm)
     max_m = 2^floor(log2(N/2));     % Max m in power of 2
     
     if optm == "all" 
+        max_m = N/2 - 1;
         m = 2:max_m;
     elseif optm == "optimized" 
         m = logspace(0, log10(max_m), pts)';

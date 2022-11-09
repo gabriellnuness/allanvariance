@@ -11,8 +11,8 @@ fprintf("Chosen file: %s\n",file)
 
 % Choose start and end points
 % make t1 = t2 = 0 if it is to use all the data set
-t1 = 3.5;  % start measurement [h]
-t2 = 13.5;  % stop  measurement [h]
+t1 = 5.5+10/60;  % start measurement [h]
+t2 = 5.5+20/60;  % stop  measurement [h]
 
 % Setting relative path where the data is located
 user = getenv('username');
@@ -74,6 +74,14 @@ fprintf("Calculating HOMEMADE Allan variance...\n")
 [avar1, taus1] = fun_avar(data, m, fs);
 toc
 
+% Removing start
+first_point = 20;
+avar = avar(first_point:end);
+taus = taus(first_point:end);
+avar1 = avar1(first_point:end);
+taus1 = taus1(first_point:end);
+
+
 adev = sqrt(avar);
 error = avar-avar1;
 
@@ -91,7 +99,8 @@ plot(taus, abs(error))
     ax.YAxis(1).Color = 'k';
 
 %% Calculate Allan variance confidence limit
-I = 1./sqrt(2.*(N./m-1));
+% I = 1./sqrt(2.*(N./m-1));
+I = 1./sqrt(2.*(N./m(first_point:end)-1));
 
 %% Calculate noises and respective indexes
 % This part is not working correctly yet.
@@ -177,3 +186,9 @@ subplot(3,1,3)
         set(gca,'YScale','log','XScale','log')
         xlabel('Correlation time [s]')
         ylabel('Allan deviation')
+
+%% test ARW
+figure(2)
+plot(taus(taus==1),adev(taus==1),'*'); 
+adev(taus==1)
+taus(end)

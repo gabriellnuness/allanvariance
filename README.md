@@ -4,17 +4,37 @@ The objective is to use the same function to calculate noise levels from inertia
 
 ## Inputs
 
-- Sensor:
 
-Acc or Gyro
+- Accelerometer
+ 
+    m/s $^2$ or $g$
 
-- Units: 
+- Gyroscopes
 
-  m/s $^2$ or $g$ for accelerometers;
-  $\degree$/h or $\degree$/s for gyroscopes.
+    $\degree$/h or $\degree$/s
   
-  The function will calculate the Allan variance, preferably by using a library, and then plot the Allan deviation to fit the curve in order to obtain the noise values from the sensor.
+The function will calculate the Allan  variance, preferably by using a library, and then plot the Allan deviation to fit the curve in order to obtain the noise values from the sensor.
 
+## Outputs
+The Allan deviation plot will be in the same unit as the input.
+
+- Accelerometer
+  
+  Velocity random walk $(\sigma(1s))$ : $m/s^2/\sqrt{Hz}$ or $g/\sqrt{Hz}$
+  
+  Bias: m/s $^2$ or $g$
+
+  <!-- Acceleration random walk:  -->
+  
+
+- Gyroscopes
+
+  Angle random walk $(\sigma(1s))$ :
+
+  Bias:
+
+  Rate random walk:
+  
 
 # How to recover the noise values
 

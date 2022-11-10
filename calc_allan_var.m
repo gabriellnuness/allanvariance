@@ -4,15 +4,16 @@ clc
 close all
 
 % Data info
-sensor  = 'gyroscope';
+sensor  = 'gyroscope'; 
 file    = 'gyro_test_data.txt';
 fs      = 100;   % [Hz]
-fprintf("Chosen file: %s\n",file)
+fprintf("Chosen file: %s\n", file)
 
 % Choose start and end points
 % make t1 = t2 = 0 if it is to use all the data set
-t1 = 5.5+10/60;  % start measurement [h]
-t2 = 5.5+20/60;  % stop  measurement [h]
+t1 = 4.5;  % start measurement [h]
+t2 = 15;  % stop  measurement [h]
+first_point = 20; % Ignore start of Allan variance
 
 % Setting relative path where the data is located
 user = getenv('username');
@@ -75,12 +76,10 @@ fprintf("Calculating HOMEMADE Allan variance...\n")
 toc
 
 % Removing start
-first_point = 20;
 avar = avar(first_point:end);
 taus = taus(first_point:end);
 avar1 = avar1(first_point:end);
 taus1 = taus1(first_point:end);
-
 
 adev = sqrt(avar);
 error = avar-avar1;
@@ -125,25 +124,50 @@ plot(taus, adev, ...
 %% Converting output units
 switch sensor
     case 'gyroscope'
+    % input must be in deg/h
         fprintf('inside gyro\n')
-        arw_out = arw/60;
-        bias_out = bias;
-        rrw_out = rrw*(60^3);
-
+        % (deg/h)*s --> deg
+        q_out   = Q/(60^2);
+        q_unit  = "deg";
+        % deg/h/rt-Hz --> deg/rt-h
+        arw_out  = arw/60;
+        arw_unit = "deg/sqrt(h)";
+        % deg/h
+        bias_out  = bias;
+        bias_unit = "deg/h";
+        % (deg/h)*s^(-1/2) --> deg/h/rt-h  
+        rrw_out  = rrw*60;
+        rrw_unit = "deg/h/sqrt(h)";
+        % deg/h/s --> deg/h/h
+        rr_out  = rr*(60^2);
+        rr_unit = "deg/h/h";
     case 'accelerometer'
+    % input must be in g
         fprintf('inside acc\n')
-        arw_out = arw*60;           % m/s^2/rt-Hz
-        bias_out = bias*(60^2);     % m/s^2
-        rrw_out = rrw*(60^3);       % m/s^3/rt-Hz?
+        % (m/s^2)*s
+        q_out  = Q;
+        q_unit = "g*s";
+        % (m/s^2)*s^(1/2)
+        arw_out  = arw;
+        arw_unit = "g*sqrt(s)";
+        % (m/s^2)*s^(0)    
+        bias_out  = bias;
+        bias_unit = "g";
+        % (m/s^2)*s^(-1/2) 
+        rrw_out  = rrw;
+        rrw_unit = "g/sqrt(s)";
+        % (m/s^2)*s^(-1)
+        rr_out  = rr;
+        rr_unit = "g/s";
 end
 
 %% Print out fitted values
 fprintf('\n')
-fprintf('Quantization noise = %.2s\n',Q)
-fprintf('Random walk noise = %.2s\n', arw)
-fprintf('Bias drift = %.2s\n', bias)
-fprintf('Rate walk noise = %.2s\n', rrw)
-fprintf('Rate ramp noise = %.2s\n', rr)
+fprintf('Quantization noise = %.2s [%s]\n',  q_out, q_unit)
+fprintf('Random walk noise = %.2s [%s]\n',   arw_out, arw_unit)
+fprintf('Bias drift = %.2s [%s]\n',          bias_out, bias_unit)
+fprintf('Rate walk noise = %.2s [%s]\n',     rrw_out, rrw_unit)
+fprintf('Rate ramp noise = %.2s [%s]\n',     rr_out, rr_unit)
 
 
 %% Figures

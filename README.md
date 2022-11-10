@@ -43,15 +43,15 @@ Allan variance according to IEEE standard
 from the Allan deviation plot, fit the lines with the given
 slope and then replace the tau in the line to get the value.
 
-Q 		→ slope -1 	at $\tau = \sqrt 3$
+Q [Unit $\cdot$ s $^{1} $]		→ slope -1 	at $\tau = \sqrt 3$
 
-ARW		→ slope -1/2 	at $\tau = 1$
+ARW	[Unit $\cdot$ s $^{1/2} $]	→ slope -1/2 	at $\tau = 1$
 
-BIAS	→ slope 0    	at $\tau \gg 1/f_{cutoff}$
+BIAS [Unit $\cdot$ s $^{0} $]	→ slope 0    	at $\tau \gg 1/f_{cutoff}$
 
-RRW		→ slope 1/2 	at $\tau = 3$
+RRW	[Unit $\cdot$ s $^{-1/2} $]	→ slope 1/2 	at $\tau = 3$
 
-RR 		→ slope 1 	at $\tau = \sqrt 2$
+RR [Unit $\cdot$ s $^{-1} $]		→ slope 1 	at $\tau = \sqrt 2$
 
 Markov  --> peak at $1.89 \tau / T_c$, where $T_c$ is correlation time and value of $0.437{\times}q_c {\times}\sqrt T_c$
 obs: Markov correlated noise is used by Wheeler (2022) as the drift value.

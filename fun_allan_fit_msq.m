@@ -24,17 +24,17 @@ function [adevFit, Q, arw, bias, rrw, rr] = fun_allan_fit_msq(taus, adev)
          taus.^(2)];
 
     avarFit = (T*W*T')\T*W*avar';
-
+    
     %% Fitted Allan deviation noise values
     % This values result in complex numbers
     % C = avarFit
     % unit = measurement unit in SI
     %
-    % Q     -->
-    % arw   --> unit / (s^(1/2))
-    % bias  --> unit / s
-    % rrw   --> unit / (s^(3/2))
-    % rr    --> 
+    % Q     --> unit * s
+    % arw   --> unit * s^(1/2)
+    % bias  --> unit * s^(0)
+    % rrw   --> unit * s^(-1/2) 
+    % rr    --> unit * s^(-1)
     %
 
     % C = 3*Q^2
@@ -43,7 +43,7 @@ function [adevFit, Q, arw, bias, rrw, rr] = fun_allan_fit_msq(taus, adev)
     % C = N^2
     arw  = avarFit(2)^(0.5);
     % C = (0.6643*B)^2
-    bias = (avarFit(3)^(0.5) ) / sqrt(2*log(2)/pi);
+    bias = (avarFit(3)^(0.5)) / sqrt(2*log(2)/pi);
     % C = K^2 /3
     rrw  = (3*avarFit(4))^(0.5);
     % C = R^2 / 2

@@ -19,6 +19,8 @@ first_point = 1; % Ignore start of Allan variance
 user = getenv('username');
 addpath(['c:\users\',user,'\Downloads']);
 addpath(['d:\users\',user,'\Downloads']);
+% Addpath to example data
+addpath('..\')
 
 % Importing data
 tic

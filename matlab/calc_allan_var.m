@@ -4,16 +4,16 @@ clc
 close all
 
 % Data info
-sensor  = 'gyroscope'; 
-file    = 'gyro_test_data.txt';
+sensor  = 'accelerometer'; 
+file    = 'acc_test_data.txt';
 fs      = 100;   % [Hz]
 fprintf("Chosen file: %s\n", file)
 
 % Choose start and end points
 % make t1 = t2 = 0 if it is to use all the data set
-t1 = 4.5;  % start measurement [h]
-t2 = 15;  % stop  measurement [h]
-first_point = 20; % Ignore start of Allan variance
+t1 = 0;%4.5;  % start measurement [h]
+t2 = 0;%15;  % stop  measurement [h]
+first_point = 1; % Ignore start of Allan variance
 
 % Setting relative path where the data is located
 user = getenv('username');

@@ -27,7 +27,7 @@ end
 pts = 1000;
 max_m = 2^floor(log2(N/2)) 
 m = 10 .^(range(0, stop=log10(max_m), length=pts));
-m = floor.(Int, m);     
+m = floor.(m);     
 m = unique(m);
 
 @time begin
@@ -38,12 +38,12 @@ m = unique(m);
 tau0 = 1/fs;
 taus = m*tau0;      # Cluster durations
 
-avar = Float64[];
+avar = zeros(length(m),1);
 # Homemade Allan variance calculation
-for k = 1:length(m)
-    avar = [avar; sum( (θ[k+2*m[k]:N]
-                        - 2*θ[k+m[k]:N-m[k]]
-                        + θ[k:N-2*m[k]]).^2) ];
+for (k, τ) in enumerate(m)
+    avar[k] = sum( (θ[k+2*τ:N]
+                        - 2*θ[k+τ:N-τ]
+                        + θ[k:N-2*τ]).^2);
 end
 avar = avar./(2 .* taus.^2 .* (N.-2*m));
 

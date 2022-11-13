@@ -1,19 +1,19 @@
-function [taus, avar] = calc_avar(Ω,fs,m)
+function fun_avar(Ω, fs, m)
    
-    N = length(Ω);
-    θ = cumsum(Ω)/fs;
+Ω = data[:,1];
+θ = cumsum(Ω)/fs;
+
+tau0 = 1/fs;
+taus = m*tau0;      # Cluster durations
+
+avar = zeros(length(m),1);
+# Homemade Allan variance calculation
+for (k, τ) in enumerate(m)
+    avar[k] = sum( (θ[k+2*τ:N]
+                    - 2*θ[k+τ:N-τ]
+                    + θ[k:N-2*τ]).^2);
+    avar[k] = avar[k]/(2* (τ/fs)^2 * (N-2*τ));
+end
     
-    tau0 = 1/fs;
-    taus = m*tau0;      # Cluster durations
-    
-    avar = zeros(length(m), 1);
-    # Half vectorized approach
-    tic
-    for k = 1:length(m)
-        avar(k) = sum( (θ(k+2*m(k):N)
-                    - 2*θ(k+m(k):N-m(k))
-                    + θ(k:N-2*m(k))).^2 );
-    end
-    avar = avar./(2 .* taus.^2 .* (N-2*m));
-    toc
+(taus, avar)
 end

@@ -2,6 +2,8 @@
 using DelimitedFiles
 using Plots
 using AllanDeviations
+include("fun_avar.jl")
+include("fun_tau_array.jl")
 
 @time begin
 # Importing file
@@ -13,7 +15,7 @@ println("Chosen file: ",file)
 path = pwd()*"\\";
 data = readdlm("$path$file", '\n');
 
-# Creating correlation time array
+# Creating time vector
 N = length(data);
 t = LinRange(0, (N-1)/fs, N);
 end
@@ -24,36 +26,23 @@ end
 #     ylabel = sensor)
 
 # Calculating correlation time array
-pts = 1000;
-max_m = 2^floor(log2(N/2)) 
-m = 10 .^(range(0, stop=log10(max_m), length=pts));
-m = floor.(m);     
-m = unique(m);
+m = fun_tau_array(N, 1000);
 
+# Homemade Allan variance function
 @time begin
-# Calculating Allan variance
-Ω = data[:,1];
-θ = cumsum(Ω)/fs;
-
-tau0 = 1/fs;
-taus = m*tau0;      # Cluster durations
-
-avar = zeros(length(m),1);
-# Homemade Allan variance calculation
-for (k, τ) in enumerate(m)
-    avar[k] = sum( (θ[k+2*τ:N]
-                        - 2*θ[k+τ:N-τ]
-                        + θ[k:N-2*τ]).^2);
+(taus, avar) = fun_avar(data[:,1], fs, m);
 end
-avar = avar./(2 .* taus.^2 .* (N.-2*m));
 
-end
+adev = sqrt.(avar);
+
+scatter(taus, adev,
+xscale = :log10, yscale = :log10)
 
 # Allan deviation from library
 @time begin
-
-result = allandev(Ω, 100.0, frequency = true, 
-    taus = 1.05) # log 1.001 space among taus
+result = allandev(data[:,1], 100.0,
+            frequency = true, 
+            taus = 1.05) # log 1.001 space among taus
 
 scatter(result.tau, result.deviation,
     xscale = :log10, yscale = :log10)

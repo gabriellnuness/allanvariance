@@ -28,7 +28,7 @@ plt.show()
 m = fun_taus(N, 1000)
 
 # Calculating overlapping Allan variance
-(taus, adev, ade, adn) = allantools.oadev(data, rate=fs, data_type="freq", taus=m)
+(taus, adev, ade, adn) = allantools.oadev(data, rate=fs, data_type="freq", taus = m/fs)
 
 fig = plt.loglog(taus, adev,'.')
 plt.xlabel("Correlation time [s]")

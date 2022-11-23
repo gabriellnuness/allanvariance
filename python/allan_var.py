@@ -11,9 +11,9 @@ file = "example_data.txt"
 fs = 100 # Hz
 
 # pandas read csv is super fast
-data  = pd.read_csv(file, header=None, names=["Sensor data"])
+raw_data  = pd.read_csv(("..\\" + file), sep='\t' ,header=None, names=["Sensor data", "Temperature"])
 # to use allantools the data needs to be numpy array    
-data = data.to_numpy()
+data = raw_data["Sensor data"].to_numpy()
 
 # Creating time vector
 N = len(data)

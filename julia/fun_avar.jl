@@ -1,7 +1,7 @@
 function fun_avar(Ω, fs, m)
    
-Ω = data[:,1];
 θ = cumsum(Ω)/fs;
+N = length(Ω)
 
 tau0 = 1/fs;
 taus = m*tau0;      # Cluster durations

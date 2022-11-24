@@ -1,4 +1,4 @@
-cd('..')
+cd('..\matlab')
 clc
 
 input = [3,1,0,-4,5,2]';
@@ -10,7 +10,6 @@ tolerance = 0.001;
 
 for i = 1:3
     
-    i
     assert(abs(output(i)-matlab_output(i)) < tolerance)
     assert(abs(output(i)-act_output(i)) < tolerance)
    

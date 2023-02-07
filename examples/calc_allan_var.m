@@ -1,11 +1,12 @@
 %% Importing data
+addpath('..\matlab')
 clear
 clc
 close all
 
 % Data info
 sensor  = 'accelerometer'; 
-file    = 'acc_test_data.txt';
+file    = 'example_data.txt';
 fs      = 100;   % [Hz]
 fprintf("Chosen file: %s\n", file)
 
@@ -14,13 +15,6 @@ fprintf("Chosen file: %s\n", file)
 t1 = 0;%4.5;  % start measurement [h]
 t2 = 0;%15;  % stop  measurement [h]
 first_point = 1; % Ignore start of Allan variance
-
-% Setting relative path where the data is located
-user = getenv('username');
-addpath(['c:\users\',user,'\Downloads']);
-addpath(['d:\users\',user,'\Downloads']);
-% Addpath to example data
-addpath('..\')
 
 % Importing data
 tic

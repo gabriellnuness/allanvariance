@@ -1,6 +1,6 @@
 # Script to import sensor data and calculate the Allan varianc
 using DelimitedFiles
-using Plots
+using PyPlot
 using AllanDeviations
 include("fun_avar.jl")
 include("fun_tau_array.jl")
@@ -9,10 +9,10 @@ include("fun_tau_array.jl")
 # Importing file
 sensor  = "gyroscope";
 file    = "example_data.txt";
-fs      = 100;   # [Hz]
+fs      = 100.0;   # [Hz]
 println("Chosen file: ",file)
 
-path = pwd()*"\\";
+path = pwd()*"\\examples\\";
 data = readdlm("$path$file", '\n');
 
 # Creating time vector
@@ -35,27 +35,31 @@ end
 
 adev = sqrt.(avar);
 
-scatter(taus, adev,
-xscale = :log10, yscale = :log10)
-
 # Allan deviation from library
 @time begin
-result = allandev(data[:,1], 100.0,
+result = allandev(data[:,1], fs,
             frequency = true, 
-            taus = 1.05) # log 1.001 space among taus
+            taus = m/fs) # log 1.001 space among taus
 
-scatter(result.tau, result.deviation,
-    xscale = :log10, yscale = :log10)
+PyPlot.plot(result.tau, result.deviation)
+PyPlot.xscale("log")
+PyPlot.yscale("log")
 end
 
-plot(taus, avar,
-    title="Allan variance",
-    xaxis=:log, yaxis=:log,
-    xlabel="Correlation time [s]",ylabel="Ω [deg/h]",
-    linewidth=2,legend=false)
+PyPlot.figure()
+PyPlot.plot(taus, avar)
+PyPlot.plot(title,"Allanvariance")
+PyPlot.title("Allan variance")
+PyPlot.xscale("log")
+PyPlot.yscale("log")
+PyPlot.xlabel("Correlation time [s]")
+PyPlot.ylabel("Ω [deg²/h²]")
 
-plot(taus, sqrt.(avar),
-    title="Allan deviation",
-    xaxis=:log, yaxis=:log,
-    xlabel="Correlation time [s]",ylabel="Ω [deg/h]",
-    linewidth=2,legend=false)
+PyPlot.figure()
+PyPlot.plot(taus, sqrt.(avar))
+PyPlot.plot(title,"Allanvariance")
+PyPlot.title("Allan variance")
+PyPlot.xscale("log")
+PyPlot.yscale("log")
+PyPlot.xlabel("Correlation time [s]")
+PyPlot.ylabel("Ω [deg/h]")

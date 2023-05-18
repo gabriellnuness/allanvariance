@@ -1,4 +1,6 @@
 function fun_avar(Ω, fs, m)
+# Homemade function to calculate the Allan variance.
+# It is 30 times longer than the function in AllanDeviations 
 
     if length(Ω)<3
         error("Allan variance needs at least 3 data points")

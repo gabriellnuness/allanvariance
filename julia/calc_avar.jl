@@ -1,4 +1,8 @@
 # Script to import sensor data and calculate the Allan varianc
+
+# macro to start running script from its original folder
+cd(@__DIR__)
+
 using DelimitedFiles
 import PyPlot as plt
 using AllanDeviations
@@ -8,11 +12,11 @@ include("fun_tau_array.jl")
 @time begin
 # Importing file
 sensor  = "gyroscope";
-file    = "example_data.txt";
+file    = "\\example_data.txt";
 fs      = 100.0;   # [Hz]
 println("Chosen file: ",file)
 
-path = pwd()*"\\examples\\";
+path = "..\\examples\\";
 data = readdlm("$path$file", '\n');
 
 # Creating time vector
@@ -37,11 +41,11 @@ adev = sqrt.(avar);
 
 # Allan deviation from library
 @time begin
-result = allandev(data[:,1], fs, frequency = true, taus = m/fs) # log 1.001 space among taus
+result = allandev(data[:,1], fs, frequency=true, taus=1.05) # log 1.001 space among taus
 end
 
 plt.figure()
-plt.plot(result.tau, result.deviation, linewidth=6, alpha=.3, label="library")
+plt.plot(result.tau, result.deviation,"o", linewidth=6, alpha=.3, label="library")
 plt.plot(taus, sqrt.(avar), "o", markersize=1, label="homemade")
 plt.title("Allan variance")
 plt.xlabel("Correlation time [s]")

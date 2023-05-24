@@ -36,11 +36,11 @@ plt.ylabel("sensor")
 # Calculating correlation time array
 m = fun_tau_array(N, 1000);
 
-# Homemade Allan variance function
-@time begin
-    (taus, avar) = fun_avar(data[:,1], fs, m);
-end
-adev = sqrt.(avar);
+# # Homemade Allan variance function
+# @time begin
+#     (taus, avar) = fun_avar(data[:,1], fs, m);
+# end
+# adev = sqrt.(avar);
 
 # Allan deviation from library
 @time begin
@@ -50,24 +50,24 @@ adev = sqrt.(avar);
 end
 
 # Perform fitting of noise values
-(adev_fit, Q, arw, bias, rrw, rr) = fit_allanvar(taus[:,1], avar[:,1])
+(adev_fit, Q, arw, bias, rrw, rr) = fit_allanvar(result.tau, result.deviation)
 
 
-# Plot Allan variance
+# # Plot Allan variance
+# plt.figure()
+# plt.plot(result.tau, result.deviation,"o", linewidth=6, alpha=.3, label="library")
+# plt.plot(taus, adev, "o", markersize=1, label="homemade")
+# plt.title("Allan variance")
+# plt.xlabel("Correlation time [s]")
+# plt.ylabel("Ω [deg/h]")
+# plt.xscale("log")
+# plt.yscale("log")
+# plt.legend()
+
+# Plotting fitting
 plt.figure()
-plt.plot(result.tau, result.deviation,"o", linewidth=6, alpha=.3, label="library")
-plt.plot(taus, adev, "o", markersize=1, label="homemade")
-plt.title("Allan variance")
-plt.xlabel("Correlation time [s]")
-plt.ylabel("Ω [deg/h]")
-plt.xscale("log")
-plt.yscale("log")
-plt.legend()
-
-
-plt.figure()
-plt.plot(taus, adev,)
-plt.plot(taus, adev_fit)
+plt.plot(result.tau, result.deviation)
+plt.plot(result.tau, adev_fit)
 plt.title("Noise values fitting example")
 plt.xscale("log")
 plt.yscale("log")

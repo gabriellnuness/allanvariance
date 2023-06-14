@@ -55,3 +55,10 @@ RR [Unit $\cdot$ s $^{-1} $]		→ slope 1 	at $\tau = \sqrt 2$
 
 Markov  --> peak at $1.89 \tau / T_c$, where $T_c$ is correlation time and value of $0.437{\times}q_c {\times}\sqrt T_c$
 obs: Markov correlated noise is used by Wheeler (2022) as the drift value.
+
+## Fitting noises
+
+Considering an Allan deviation in the classical form (without the decreasing part at the end) the noises values can be fitted with the implemented function `fit_allanvar()`, as shown by the `example.jl`.
+
+![image](images/example_data.png)
+![image](images/example_allan_fit.png)

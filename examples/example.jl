@@ -32,6 +32,7 @@ plt.figure()
 plt.plot(t/60/60, data)
 plt.xlabel("Time [h]")
 plt.ylabel("sensor")
+plt.title("Example data")
 
 # Calculating correlation time array
 m = fun_tau_array(N, 1000);

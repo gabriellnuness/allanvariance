@@ -6,3 +6,4 @@
 *.png
 *.pyc
 settings.json
+!/images/*
